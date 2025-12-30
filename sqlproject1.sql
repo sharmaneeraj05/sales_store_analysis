@@ -1,4 +1,4 @@
-﻿USE Youtube_Channel;
+
 
 CREATE TABLE sales_store (
 transaction_id VARCHAR(15),
@@ -19,15 +19,6 @@ status VARCHAR(15)
 
 SELECT * FROM sales_store
 
-SET DATEFORMAT dmy
-BULK INSERT sales_store
-FROM 'C:\Users\0111r\OneDrive\Desktop\store\sales\sales_store\sales.csv'
-	WITH (
-		FIRSTROW=2,
-		FIELDTERMINATOR=',',
-		ROWTERMINATOR='\n'
-	);
-	--YYYY-MM-DD
 --Data Cleaning
 
 SELECT * FROM sales_store
@@ -64,35 +55,7 @@ WHERE transaction_id IN ('TXN240646','TXN342128','TXN855235','TXN981773')
 --Step 2 :- Correction of Headers
 SELECT * FROM sales
 
-EXEC sp_rename'sales.quantiy','quantity','COLUMN'
-
-EXEC sp_rename'sales.prce','price','COLUMN'
-
---Step 3 :- To check Datatype
-
-SELECT COLUMN_NAME, DATA_TYPE
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME='sales'
-
 --Step 4 :- To Check Null Values 
-
---to check null count
-
-DECLARE @SQL NVARCHAR(MAX) = '';
-
-SELECT @SQL = STRING_AGG(
-    'SELECT ''' + COLUMN_NAME + ''' AS ColumnName, 
-    COUNT(*) AS NullCount 
-    FROM ' + QUOTENAME(TABLE_SCHEMA) + '.sales 
-    WHERE ' + QUOTENAME(COLUMN_NAME) + ' IS NULL', 
-    ' UNION ALL '
-)
-WITHIN GROUP (ORDER BY COLUMN_NAME)
-FROM INFORMATION_SCHEMA.COLUMNS 
-WHERE TABLE_NAME = 'sales';
-
--- Execute the dynamic SQL
-EXEC sp_executesql @SQL;
 
 --treating null values 
 
@@ -367,112 +330,14 @@ SELECT * FROM sales
 FROM sales
 GROUP BY MONTH(purchase_date)
 ORDER BY Months
---2023	1	₹ 46,28,608
---2024	1	₹ 3,39,442
-
-SELECT(4628608+339442)--4968050
 
 --Business Problem: Sales fluctuations go unnoticed.
 
 
 --Business Impact: Plan inventory and marketing according to seasonal trends.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 SELECT * FROM sales
-
-SELECT
-	FORMAT(purchase_date,'yyyy-MM') AS Purchased_Month_Year,
-	SUM(price*quantity) AS totalsales,
-	SUM(quantity) AS totalquantity
-FROM sales 
-GROUP BY FORMAT(purchase_date,'yyyy-MM')
-ORDER BY Purchased_Month_Year ASC
------------------------------------------------------------------------------------------------------------
-
-SELECT
-	--YEAR(purchase_date) AS years,
-	MONTH(purchase_date) as months,
-	SUM(price*quantity) AS totalsales
-FROM sales 
-GROUP BY MONTH(purchase_date)
---YEAR(purchase_date)
-ORDER BY months ASC
-
---Business Problem: Sales fluctuations go unnoticed.
-
---Business Impact: Plan inventory and marketing according to seasonal trends.
+-----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -501,3 +366,4 @@ ORDER BY product_category
 --Business Problem Solved: Gender-based product preferences.
 
 --Business Impact: Personalized ads, gender-focused campaigns.
+
